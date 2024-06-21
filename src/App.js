@@ -13,22 +13,41 @@ function App() {
 
 
   // ボタンを押すと全件表示
-  const handleAddName = () => {
-    fetch("http://localhost:80/api/customers", /*{
-      // http://localhost:80/
-      // method: "Get",
-      // mode: "no-cors"
-      // headers: {
-      //   "Context-Type": "application/json",
-      //   "Access-Control-Allow-Origin": "http://localhost:3000"
-      // }
-    }*/)
-      .then((res) => res.json())
-      .then((json) => setNames(json))
-      .catch((error) => console.error("エラーです", error));
-  };
+  // const handleAddName = () => {
+  //   fetch("http://localhost:80/api/customers", /*{
+  //     // http://localhost:80/
+  //     // method: "Get",
+  //     // mode: "no-cors"
+  //     // headers: {
+  //     //   "Context-Type": "application/json",
+  //     //   "Access-Control-Allow-Origin": "http://localhost:3000"
+  //     // }
+  //   }*/)
+  //     .then((res) => res.json())
+  //     .then((json) => setNames(json))
+  //     .catch((error) => console.error("エラーです", error));
+  // };
 
-  console.log(names);
+  // IDで検索する
+  const handleSearchName = () => {
+    const params = namesRef.current.value;
+    
+    if (params === "") {
+      fetch("http://localhost:80/api/customers")
+        .then((res) => res.json())
+        .then((json) => setNames(json))
+        .catch((error) => console.error("エラーです", error));
+    } else {
+      const query = new URLSearchParams(params);
+      console.log(query);
+      fetch(`http://localhost:80/api/customers?${query}`)
+        .then((res) => res.json())
+        .then((json) => setNames(json))
+        .catch((error) => console.error("エラーです", error));
+
+      namesRef.current.value = null;
+    }
+  };
 
 
   const handleAddTodo = (e) => {
@@ -62,7 +81,8 @@ function App() {
       <div>残りのタスク:{todos.filter((todo) => !todo.completed).length}</div>
       <br />
       <AddName names={names} />
-      <button onClick={handleAddName}>名前追加</button>
+      <input type="text" ref={namesRef} />
+      <button onClick={handleSearchName}>名前追加</button>
     </div>
   );
 }
