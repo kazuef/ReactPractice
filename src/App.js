@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 function App() {
   const [todos, setTodos] = useState([]);
   const [names, setNames] = useState([]);
+  const [name, setName] = useState([]);
 
   const todoNameRef = useRef();
   const namesRef = useRef();
@@ -31,7 +32,7 @@ function App() {
   // IDで検索する
   const handleSearchName = () => {
     const params = namesRef.current.value;
-    
+
     if (params === "") {
       fetch("http://localhost:80/api/customers")
         .then((res) => res.json())
@@ -49,6 +50,17 @@ function App() {
     }
   };
 
+  // handleSearchNameのテスト
+  const TestSearch = () => {
+    const params = namesRef.current.value;
+    const query = new URLSearchParams(params);
+    fetch(`http://localhost:80/api/customers/${query}`)
+      .then((res) => res.json())
+      .then((json) => setNames(json))
+      .then(console.log(names))
+      .catch((error) => console.error("エラーです", error));
+  }
+  // テストここまで
 
   const handleAddTodo = (e) => {
     // タスクを追加する
@@ -80,9 +92,12 @@ function App() {
       <button onClick={handleClear}>完了したタスクの削除</button>
       <div>残りのタスク:{todos.filter((todo) => !todo.completed).length}</div>
       <br />
-      <AddName names={names} />
+      {/* <AddName names={names}/> */}
+      <div>
+        {names.title}
+      </div>
       <input type="text" ref={namesRef} />
-      <button onClick={handleSearchName}>名前追加</button>
+      <button onClick={TestSearch}>名前追加</button>
     </div>
   );
 }
